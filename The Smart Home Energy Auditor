@@ -1,0 +1,79 @@
+import java.io.File;
+import java.io.FileWriter;
+import java.util.Scanner;
+
+public class The_Smart_HomeEnergyAuditor {
+
+    public static void main(String[] args) {
+
+        Scanner sc = new Scanner(System.in);
+        File file = new File("energy_audit.txt");
+
+        initFile(file);
+
+        System.out.print("How many devices to scan? ");
+        int devCount = sc.nextInt();
+
+        int[] watts = scanDevices(sc, devCount);
+
+        String data = "";
+
+        for (int i = 0; i < watts.length; i++) {
+            data += String.format("Device %d: %dW - %s%n",
+                    (i + 1), watts[i], checkEfficiency(watts[i]));
+        }
+
+        saveAudit(file, data);
+
+        System.out.println();
+        System.out.print(data);
+        System.out.println("\nEnergy audit saved to energy_audit.txt");
+    }
+
+
+    public static int[] scanDevices(Scanner sc, int count) {
+        int[] devices = new int[count];
+
+        System.out.printf("Enter wattage for %d devices:%n", count);
+
+        for (int i = 0; i < devices.length; i++) {
+            System.out.printf("Device %d: ", (i + 1));
+            devices[i] = sc.nextInt();
+        }
+
+        return devices;
+    }
+
+    
+    public static String checkEfficiency(int watts) {
+        if (watts < 200) {
+            return "Eco-Friendly";
+        } else if (watts <= 1500) {
+            return "Standard";
+        } else {
+            return "Power Hog";
+        }
+    }
+
+    
+    public static void initFile(File f) {
+        try {
+            if (!f.exists()) {
+                f.createNewFile();
+            }
+        } catch (Exception e) {
+            System.out.println("Error: " + e);
+        }
+    }
+
+    
+    public static void saveAudit(File f, String data) {
+        try {
+            FileWriter fw = new FileWriter(f);
+            fw.write(data);
+            fw.close();
+        } catch (Exception e) {
+            System.out.println("Error: " + e);
+        }
+    }
+}
